@@ -29,16 +29,14 @@ import java.util.Map;
 
 
 public class Caricamento extends AppCompatActivity {
-    public SharedPreferences sharedPreferences;
+
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_caricamento);
         sharedPreferences = getSharedPreferences("MyPref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.commit();
         final String channel = (sharedPreferences.getString("token", ""));
 
 

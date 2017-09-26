@@ -45,7 +45,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:orientation="vertical"
         android:gravity="bottom">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scan"
+            style="@style/TestoBottone"
+            android:text="Scan QR"
+            android:layout_marginBottom="8dp"/>
 
         <Button
             android:id="@+id/joinGruppo"

@@ -17,6 +17,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +29,7 @@ import java.util.Map;
 public class JoinGruppo extends AppCompatActivity {
     EditText codiceInserito;
     Button joinGruppo;
+    Button scan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,21 @@ public class JoinGruppo extends AppCompatActivity {
         setContentView(R.layout.activity_join_gruppo);
         codiceInserito = (EditText) findViewById(R.id.codiceGr);
         joinGruppo = (Button) findViewById(R.id.joinGruppo);
+        scan = (Button) findViewById(R.id.scan);
+
+        scan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentIntegrator integrator = new IntentIntegrator(JoinGruppo.this);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                integrator.setPrompt("Scan");
+                integrator.setCameraId(0);
+                integrator.setBeepEnabled(false);
+                integrator.setBarcodeImageEnabled(false);
+                integrator.initiateScan();
+            }
+        });
+
         joinGruppo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,5 +96,18 @@ public class JoinGruppo extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null)
+                Toast.makeText(JoinGruppo.this, "Scan interrotto", Toast.LENGTH_SHORT).show();
+            else
+                joinGruppo.setText(result.getContents());
+
+        } else
+            super.onActivityResult(requestCode, resultCode, data);
     }
 }
