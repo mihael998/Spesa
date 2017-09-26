@@ -76,7 +76,7 @@ public class Bacheca extends AppCompatActivity {
         fab1.setOnClickListener(onButtonClick());
         fab2.setOnClickListener(onButtonClick());
 
-        nomeUtente.setText("Ciao " + sharedPreferences.getString("Nome", "null") + "!");
+        nomeUtente.setText("Ciao " + sharedPreferences.getString("nome", "null") + "!");
 
         fam.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
             @Override

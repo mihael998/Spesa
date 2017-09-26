@@ -105,7 +105,7 @@ public class JoinGruppo extends AppCompatActivity {
             if (result.getContents() == null)
                 Toast.makeText(JoinGruppo.this, "Scan interrotto", Toast.LENGTH_SHORT).show();
             else
-                joinGruppo.setText(result.getContents());
+                codiceInserito.setText(result.getContents());
 
         } else
             super.onActivityResult(requestCode, resultCode, data);
