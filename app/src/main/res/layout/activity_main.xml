@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:padding="0dp"
+    tools:context="ivancardillo.spesa.MainActivity">
+
+    <Button
+        android:id="@+id/accedi"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:background="@color/colorAccent"
+        android:letterSpacing="0.3"
+        android:padding="25dp"
+        android:text="ACCEDI"
+        android:textColor="@color/colorSecondary" />
+
+    <Button
+        android:id="@+id/registrati"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="@color/colorPrimary"
+        android:letterSpacing="0.3"
+        android:padding="25dp"
+        android:text="REGISTRATI"
+        android:textColor="@color/colorSecondary" />
+
+
+</LinearLayout>

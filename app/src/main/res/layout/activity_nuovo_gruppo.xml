@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
+    tools:context="ivancardillo.spesa.NuovoGruppo">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <TextView
+            style="@style/Titolo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="38dp"
+            android:layout_marginTop="28dp"
+            android:gravity="center_horizontal"
+            android:text="Crea nuovo gruppo!" />
+
+        <TextView
+            style="@style/Sottotitolo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="NOME GRUPPO" />
+
+        <EditText
+            android:id="@+id/nomeGr"
+            style="@style/Testo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/Sottotitolo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:layout_marginTop="18dp"
+            android:gravity="left"
+            android:text="DATA SCADENZA" />
+
+        <Button
+            android:id="@+id/pulsanteDataScadenza"
+            style="@style/TestoBottoneVuoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="showDatePickerDialog"
+
+            android:text="Scegli data scadenza" />
+
+        <TextView
+            style="@style/Sottotitolo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:layout_marginTop="18dp"
+            android:gravity="left"
+            android:text="ORARIO SCADENZA" />
+
+        <Button
+            android:id="@+id/pulsanteOrarioScadenza"
+            style="@style/TestoBottoneVuoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="showTimePickerDialog"
+            android:text="Scegli orario scadenza" />
+
+        <!--<DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
+            android:datePickerMode="spinner"
+            android:headerBackground="@color/colorPrimary"
+            android:paddingTop="30dp" />-->
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/creaGruppo"
+            style="@style/TestoBottone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Crea gruppo" />
+
+    </LinearLayout>
+
+</LinearLayout>
