@@ -61,17 +61,15 @@ public class Accedi extends AppCompatActivity {
                             if (s.compareTo("000") == 0) {
                                 Toast.makeText(Accedi.this, "Accesso effettuato.", Toast.LENGTH_SHORT).show();
                                 Intent avanti = new Intent(Accedi.this, Bacheca.class);
-                                avanti.putExtra("Nome", nome.getText().toString());
-                                avanti.putExtra("Token", token);
 
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-
 
                                 if (sharedPreferences.getString("token", "0") != "0") {
                                     startActivity(avanti);
                                 } else {
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString("token", token);
+                                    editor.putString("nome", nome.getText().toString());
                                     editor.commit();
                                     //Toast.makeText(Accedi.this, "Accesso effettuato. Token:" + sharedPreferences.getString("token","niente"), Toast.LENGTH_SHORT).show();
                                     startActivity(avanti);

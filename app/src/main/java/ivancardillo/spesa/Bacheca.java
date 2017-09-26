@@ -56,12 +56,18 @@ public class Bacheca extends AppCompatActivity {
     private Boolean isFabOpen = false;
     private FloatingActionButton fab, fab1, fab2;
     private FloatingActionMenu fam;
+    SharedPreferences sharedPreferences;
+    TextView nomeUtente;
     //private Animation fab_open,fab_close,rotate_forward,rotate_backward;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bacheca);
+
+        sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        nomeUtente = (TextView) findViewById(R.id.nomeUtenteBacheca);
+
         toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
 
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
@@ -69,6 +75,8 @@ public class Bacheca extends AppCompatActivity {
         fam = (FloatingActionMenu) findViewById(R.id.fab);
         fab1.setOnClickListener(onButtonClick());
         fab2.setOnClickListener(onButtonClick());
+
+        nomeUtente.setText("Ciao " + sharedPreferences.getString("Nome", "null") + "!");
 
         fam.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
             @Override
@@ -133,9 +141,6 @@ public class Bacheca extends AppCompatActivity {
                         Toast.makeText(Bacheca.this, "Long Click", Toast.LENGTH_SHORT).show();
                     }
                 }));
-        String nome = getIntent().getExtras().getString("Nome");
-        TextView nomeUtente = (TextView) findViewById(R.id.nomeUtenteBacheca);
-        nomeUtente.setText("Ciao " + nome + "!");
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         refreshLayout.setOnRefreshListener(
