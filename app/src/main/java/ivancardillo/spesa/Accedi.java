@@ -71,7 +71,8 @@ public class Accedi extends AppCompatActivity {
                                     editor.putString("token", token);
                                     editor.putString("nome", nome.getText().toString());
                                     editor.commit();
-                                    //Toast.makeText(Accedi.this, "Accesso effettuato. Token:" + sharedPreferences.getString("token","niente"), Toast.LENGTH_SHORT).show();
+
+                                    Toast.makeText(Accedi.this, "Accesso effettuato. Token:" + sharedPreferences.getString("token","niente"), Toast.LENGTH_SHORT).show();
                                     startActivity(avanti);
                                 }
                             } else

@@ -9,34 +9,35 @@
     android:paddingRight="50dp"
     tools:context="ivancardillo.spesa.NuovoGruppo">
 
+
     <LinearLayout
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:orientation="vertical"
         android:weightSum="1">
 
         <TextView
-            style="@style/Titolo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="38dp"
+            android:text="Fai parte di un nuovo gruppo!"
             android:layout_marginTop="28dp"
-            android:gravity="center_horizontal"
-            android:text="Fai parte di un nuovo gruppo!" />
+            android:layout_marginBottom="38dp"
+            style="@style/Titolo"
+            android:gravity="center_horizontal"/>
 
         <TextView
-            style="@style/Sottotitolo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
-            android:text="CODICE GRUPPO" />
+            android:text="CODICE GRUPPO"
+            style="@style/Sottotitolo"
+            android:gravity="left"/>
 
         <EditText
-            android:id="@+id/codiceGr"
-            style="@style/Testo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:id="@+id/codiceGr"
+            style="@style/Testo"/>
 
 
     </LinearLayout>
@@ -61,8 +62,8 @@
             style="@style/TestoBottone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Aggiungiti" />
+            android:text="Aggiungiti"
+            android:layout_marginBottom="8dp"/>
 
     </LinearLayout>
 
