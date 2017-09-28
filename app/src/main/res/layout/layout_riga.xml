@@ -14,13 +14,12 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginBottom="2.5dp"
+
         android:layout_marginTop="10dp"
+        app:cardCornerRadius="0dp"
         card_view:cardBackgroundColor="@color/color_white"
-        card_view:cardCornerRadius="15"
-        card_view:cardElevation="5dp"
+        app:cardElevation="1dp"
         card_view:cardUseCompatPadding="true">
 
         <LinearLayout
@@ -104,7 +103,7 @@
                         android:id="@+id/partecipanti"
                         style="@style/Sottotitolo"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="match_parent" />
                 </LinearLayout>
 
                 <View

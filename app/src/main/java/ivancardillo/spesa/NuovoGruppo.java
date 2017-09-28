@@ -9,6 +9,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.DatePicker;
@@ -66,7 +69,7 @@ public class NuovoGruppo extends AppCompatActivity {
 
         pulsanteDataScadenza = (Button) findViewById(R.id.pulsanteDataScadenza);
         pulsanteOrarioScadenza = (Button) findViewById(R.id.pulsanteOrarioScadenza);
-        Button button = (Button) findViewById(R.id.creaGruppo);
+        ImageButton button = (ImageButton) findViewById(R.id.creaGruppo);
         final EditText nomeDelGruppo = (EditText) findViewById(R.id.nomeGr);
         final Map<String, String> jsonParams = new HashMap<String, String>();
 
@@ -77,18 +80,6 @@ public class NuovoGruppo extends AppCompatActivity {
 
 
                     String string2Qr = UUID.randomUUID().toString().substring(0, 8);
-                    //Toast.makeText(NuovoGruppo.this,string2Qr,Toast.LENGTH_LONG).show();
-                    /*MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-                    try {
-                        BitMatrix bitMatrix = multiFormatWriter.encode(string2Qr, BarcodeFormat.QR_CODE,200,200);
-                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                        i.putExtra("pic", saveToInternalStorage(bitmap));
-                        i.putExtra("id", "#" + string2Qr);
-                        startActivity(i);
-                    } catch (WriterException e) {
-                        e.printStackTrace();
-                    }*/
                     SharedPreferences sharedPreferences;
                     sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
                     final String channel = (sharedPreferences.getString("token", ""));
@@ -113,7 +104,8 @@ public class NuovoGruppo extends AppCompatActivity {
 
                             if (s.compareTo("110") == 0) {
                                 Toast.makeText(NuovoGruppo.this, "Creazione Gruppo Riuscita!", Toast.LENGTH_SHORT).show();
-                                finish();
+                                Intent i=new Intent(NuovoGruppo.this,Bacheca.class);
+                                startActivity(i);
                             } else
                                 Toast.makeText(NuovoGruppo.this, "Pubblicazione gruppo fallita!", Toast.LENGTH_SHORT).show();
                         }
@@ -225,7 +217,7 @@ public class NuovoGruppo extends AppCompatActivity {
             String monthA, dayA;
             dayA = "" + day;
             monthA = "" + (month + 1);
-            if ((month + "").length() == 1) {
+            if (monthA.length() == 1) {
                 monthA = "0" + (month + 1);
             }
             if ((day + "").length() == 1) {

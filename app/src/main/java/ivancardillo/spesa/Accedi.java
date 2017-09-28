@@ -3,10 +3,12 @@ package ivancardillo.spesa;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -37,6 +39,8 @@ public class Accedi extends AppCompatActivity {
         Button accedi = (Button) findViewById(R.id.accediManda);
         final EditText nome = (EditText) findViewById(R.id.nomeUtente);
         final EditText psw = (EditText) findViewById(R.id.psw);
+
+
 
         accedi.setOnClickListener(new View.OnClickListener() {
             @Override

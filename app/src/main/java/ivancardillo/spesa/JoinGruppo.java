@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -29,7 +31,7 @@ import java.util.Map;
 public class JoinGruppo extends AppCompatActivity {
     EditText codiceInserito;
     Button joinGruppo;
-    Button scan;
+    ImageView scan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,7 @@ public class JoinGruppo extends AppCompatActivity {
         setContentView(R.layout.activity_join_gruppo);
         codiceInserito = (EditText) findViewById(R.id.codiceGr);
         joinGruppo = (Button) findViewById(R.id.joinGruppo);
-        scan = (Button) findViewById(R.id.scan);
+        scan = (ImageView) findViewById(R.id.scan);
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override

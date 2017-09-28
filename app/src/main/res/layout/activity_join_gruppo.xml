@@ -25,13 +25,25 @@
             android:layout_marginBottom="38dp"
             style="@style/Titolo"
             android:gravity="center_horizontal"/>
+        <RelativeLayout
 
-        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="CODICE GRUPPO"
-            style="@style/Sottotitolo"
-            android:gravity="left"/>
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="CODICE GRUPPO"
+                style="@style/Sottotitolo"/>
+
+            <ImageView
+                android:id="@+id/scan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_qr"/>
+            </RelativeLayout>
+
 
         <EditText
             android:layout_width="match_parent"
@@ -49,13 +61,13 @@
         android:orientation="vertical"
         android:gravity="bottom">
 
-        <Button
+        <!--<Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/scan"
+
             style="@style/TestoBottone"
             android:text="Scan QR"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"/>-->
 
         <Button
             android:id="@+id/joinGruppo"
