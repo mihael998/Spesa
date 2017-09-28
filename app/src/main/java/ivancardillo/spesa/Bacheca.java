@@ -3,11 +3,13 @@ package ivancardillo.spesa;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,8 +49,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.security.AccessController.getContext;
+
 public class Bacheca extends AppCompatActivity {
     public ArrayList<Gruppo> gruppi;
+    ArrayList<Gruppo> multiselect_list = new ArrayList<>();
+    android.view.ActionMode mActionMode;
+    Menu context_menu;
     GruppiAdapter adapter;
     private ListView v;
     private Gruppo g;
@@ -59,6 +66,7 @@ public class Bacheca extends AppCompatActivity {
     private FloatingActionMenu fam;
     SharedPreferences sharedPreferences;
     TextView nomeUtente;
+    boolean isMultiSelect = false;
     //private Animation fab_open,fab_close,rotate_forward,rotate_backward;
 
     boolean doubleBackToExitPressedOnce = false;
@@ -111,27 +119,6 @@ public class Bacheca extends AppCompatActivity {
                 }
             }
         });
-        /*fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
-        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
-        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
-        fab_open.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        fab.setOnClickListener(this);
-        fab1.setOnClickListener(this);
-        fab2.setOnClickListener(this);*/
 
         RecyclerView rvContacts = (RecyclerView) findViewById(R.id.listaGruppi);
 
@@ -147,21 +134,36 @@ public class Bacheca extends AppCompatActivity {
         rvContacts.setAdapter(adapter);
         setSupportActionBar(toolbar);
         refresh();
+
         rvContacts.addOnItemTouchListener(new RecyclerItemListener(getApplicationContext(), rvContacts,
                 new RecyclerItemListener.RecyclerTouchListener() {
                     public void onClickItem(View v, int position) {
-                        Intent avanti = new Intent(Bacheca.this, GruppoActivity.class);
-                        avanti.putExtra("codiceGruppo", gruppi.get(position).getCodiceGruppo());
-                        avanti.putExtra("codiceAdmin", gruppi.get(position).getCodiceAdmin());
-                        avanti.putExtra("nomeGruppo", gruppi.get(position).getNome());
-                        avanti.putExtra("scadenzaOra", gruppi.get(position).getScadenzaOra());
-                        avanti.putExtra("scadenzaData", gruppi.get(position).getScadenzaData());
-                        avanti.putStringArrayListExtra("partecipanti", gruppi.get(position).getUtenti());
-                        startActivity(avanti);
+                        if (isMultiSelect)
+                            multi_select(position);
+                        else {
+                            Intent avanti = new Intent(Bacheca.this, GruppoActivity.class);
+                            avanti.putExtra("codiceGruppo", gruppi.get(position).getCodiceGruppo());
+                            avanti.putExtra("codiceAdmin", gruppi.get(position).getCodiceAdmin());
+                            avanti.putExtra("nomeGruppo", gruppi.get(position).getNome());
+                            avanti.putExtra("scadenzaOra", gruppi.get(position).getScadenzaOra());
+                            avanti.putExtra("scadenzaData", gruppi.get(position).getScadenzaData());
+                            avanti.putStringArrayListExtra("partecipanti", gruppi.get(position).getUtenti());
+                            startActivity(avanti);
+                        }
                     }
 
                     public void onLongClickItem(View v, int position) {
-                        Toast.makeText(Bacheca.this, "Long Click", Toast.LENGTH_SHORT).show();
+                        if (!isMultiSelect) {
+                            multiselect_list = new ArrayList<Gruppo>();
+                            isMultiSelect = true;
+
+                            if (mActionMode == null) {
+                                mActionMode = startActionMode(mActionModeCallback);
+                            }
+                        }
+
+                        multi_select(position);
+
                     }
                 }));
 
@@ -178,6 +180,22 @@ public class Bacheca extends AppCompatActivity {
 
 
     }
+    public void multi_select(int position) {
+        if (mActionMode != null) {
+            if (multiselect_list.contains(gruppi.get(position)))
+                multiselect_list.remove(gruppi.get(position));
+            else
+                multiselect_list.add(gruppi.get(position));
+
+            if (multiselect_list.size() > 0)
+                mActionMode.setTitle("" + multiselect_list.size());
+            else
+                mActionMode.setTitle("");
+
+            //refreshAdapter();
+
+        }
+    }
 
     private View.OnClickListener onButtonClick() {
         return new View.OnClickListener() {
@@ -193,6 +211,46 @@ public class Bacheca extends AppCompatActivity {
                 fam.close(true);
             }
         };
+    }
+    private android.view.ActionMode.Callback mActionModeCallback = new android.view.ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
+            // Inflate a menu resource providing context menu items
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_contextual_action_mode, menu);
+            context_menu = menu;
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+            return false; // Return false if nothing is done
+        }
+
+        @Override
+        public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.deleteGruppo:
+
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(android.view.ActionMode mode) {
+            mActionMode = null;
+            isMultiSelect = false;
+            multiselect_list = new ArrayList<Gruppo>();
+            //refreshAdapter();
+        }
+    };
+    public void refreshAdapter()
+    {
+       gruppi.removeAll(multiselect_list);
+        adapter.notifyDataSetChanged();
     }
 
 
@@ -288,46 +346,5 @@ public class Bacheca extends AppCompatActivity {
 
 
 
-    /*@Override
-    public void onClick(View v) {
-        int id = v.getId();
-        switch (id){
-            case R.id.fab:
-
-                //animateFAB();
-                break;
-            case R.id.fab1:
-
-                Log.d("Raj", "Fab 1");
-                break;
-            case R.id.fab2:
-
-                Log.d("Raj", "Fab 2");
-                break;
-        }
-    }*/
-
-    /*public void animateFAB(){
-
-        if(isFabOpen){
-
-            fab.startAnimation(rotate_backward);
-            fab1.startAnimation(fab_close);
-            fab2.startAnimation(fab_close);
-            fab1.setClickable(false);
-            fab2.setClickable(false);
-            isFabOpen = false;
-
-        } else {
-
-            fab.startAnimation(rotate_forward);
-            fab1.startAnimation(fab_open);
-            fab2.startAnimation(fab_open);
-            fab1.setClickable(true);
-            fab2.setClickable(true);
-            isFabOpen = true;
-
-        }
-    }*/
 
 }

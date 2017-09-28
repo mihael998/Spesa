@@ -5,6 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textSize">30dp</item>
         <!--<item name="android:textColor">#ffffff</item>-->
@@ -51,6 +52,10 @@
     </style>
 
     <style name="Action" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
+
+        <!--  For Custom Action Mode Background Color/Drawable -->
+        <item name="actionModeBackground">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
