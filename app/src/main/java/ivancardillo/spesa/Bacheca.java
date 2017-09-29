@@ -147,12 +147,10 @@ public class Bacheca extends AppCompatActivity {
                             multi_select(position);
                         else {
                             Intent avanti = new Intent(Bacheca.this, GruppoActivity.class);
-                            avanti.putExtra("codiceGruppo", gruppi.get(position).getCodiceGruppo());
-                            avanti.putExtra("codiceAdmin", gruppi.get(position).getCodiceAdmin());
-                            avanti.putExtra("nomeGruppo", gruppi.get(position).getNome());
-                            avanti.putExtra("scadenzaOra", gruppi.get(position).getScadenzaOra());
-                            avanti.putExtra("scadenzaData", gruppi.get(position).getScadenzaData());
-                            avanti.putStringArrayListExtra("partecipanti", gruppi.get(position).getUtenti());
+                            Gruppo gruppo = gruppi.get(position);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("value", gruppo);
+                            avanti.putExtras(bundle);
                             startActivity(avanti);
                         }
                     }
