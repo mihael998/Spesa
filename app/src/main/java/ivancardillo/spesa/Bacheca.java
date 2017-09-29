@@ -1,5 +1,6 @@
 package ivancardillo.spesa;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -86,7 +87,7 @@ public class Bacheca extends AppCompatActivity {
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }
@@ -158,6 +159,7 @@ public class Bacheca extends AppCompatActivity {
                             isMultiSelect = true;
 
                             if (mActionMode == null) {
+                                refreshLayout.setEnabled(false);
                                 mActionMode = startActionMode(mActionModeCallback);
                             }
                         }
@@ -172,14 +174,15 @@ public class Bacheca extends AppCompatActivity {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        refresh();
-                        refreshLayout.setRefreshing(false);
+                            refresh();
+                            refreshLayout.setRefreshing(false);
                     }
                 }
         );
 
 
     }
+
     public void multi_select(int position) {
         if (mActionMode != null) {
             if (multiselect_list.contains(gruppi.get(position)))
@@ -206,12 +209,31 @@ public class Bacheca extends AppCompatActivity {
                     startActivity(i);
                 } else if (view == fab2) {
                     Intent i = new Intent(Bacheca.this, NuovoGruppo.class);
-                    startActivity(i);
+                    startActivityForResult(i,1);
                 }
                 fam.close(true);
             }
         };
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = data.getExtras();
+                Gruppo nuovo=(Gruppo)bundle.getSerializable("value");
+                gruppi.add(nuovo);
+                adapter.notifyItemInserted(gruppi.size()-1);
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                // Do something with the contact here (bigger example below)
+            }
+        }
+    }
+
     private android.view.ActionMode.Callback mActionModeCallback = new android.view.ActionMode.Callback() {
 
         @Override
@@ -232,7 +254,62 @@ public class Bacheca extends AppCompatActivity {
         public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.deleteGruppo:
+                    refreshAdapter();
+                    refreshLayout.setEnabled(true);
 
+                    final Map<String, String> jsonParams = new HashMap<String, String>();
+                    int l=0;
+                    JSONArray jsonArray = new JSONArray();
+                    for(Gruppo gr: multiselect_list)
+                    {
+                        try {
+                            jsonArray.put(l,gr.getCodiceGruppo());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        l++;
+                    }
+
+                    JSONObject nuovo = new JSONObject();
+
+                    try {
+                        nuovo.put("gruppi", jsonArray);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    final String url = "http://www.mishu.altervista.org/api/gruppo/elimina";
+                    final RequestQueue req = Volley.newRequestQueue(Bacheca.this);
+                    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url,nuovo, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            String s = "";
+                            try {
+                                s = response.get("risposta").toString();
+                            } catch (JSONException e) {
+                                Toast.makeText(Bacheca.this, "Errore interno", Toast.LENGTH_SHORT).show();
+                            }
+
+                            if (s.compareTo("110") == 0) {
+                                Toast.makeText(Bacheca.this, "Cancellazione effettuata", Toast.LENGTH_SHORT).show();
+
+                            } else
+                                Toast.makeText(Bacheca.this, "Pubblicazione gruppo fallita!", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Response.ErrorListener() {
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(Bacheca.this, error.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<String, String>();
+                            headers.put("Content-Type", "application/json; charset=utf-8");
+                            return headers;
+                        }
+                    };
+                    req.add(jsonObjReq);
+
+
+                    mActionMode.finish();
                     return true;
                 default:
                     return false;
@@ -247,10 +324,17 @@ public class Bacheca extends AppCompatActivity {
             //refreshAdapter();
         }
     };
-    public void refreshAdapter()
-    {
-       gruppi.removeAll(multiselect_list);
-        adapter.notifyDataSetChanged();
+
+    public void refreshAdapter() {
+        for(Gruppo gr:multiselect_list){
+            if(gruppi.contains(gr))
+            {
+
+                int i=gruppi.indexOf(gr);
+                gruppi.remove(i);
+                adapter.notifyItemRemoved(i);
+            }
+        }
     }
 
 
@@ -291,11 +375,15 @@ public class Bacheca extends AppCompatActivity {
                         Gruppo gruppo;
                         gruppo = new Gruppo(nome.toUpperCase(), partecipanti, orario.substring(0, 5), newDateString, codiceAdmin, codiceGruppo);
 
-                        gruppi.add(gruppo);
+
+                            gruppi.add(gruppo);
+
+
 
 
                     }
                     adapter.notifyDataSetChanged();
+
 
                 } catch (JSONException e) {
                     Toast.makeText(Bacheca.this, "Errore interno", Toast.LENGTH_SHORT).show();
@@ -343,8 +431,6 @@ public class Bacheca extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 
 
 }

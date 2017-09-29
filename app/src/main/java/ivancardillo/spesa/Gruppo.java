@@ -1,5 +1,6 @@
 package ivancardillo.spesa;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * Created by ivanc on 18/09/2017.
  */
 
-public class Gruppo {
+public class Gruppo implements Serializable {
     String nome;
     String codiceGruppo;
     String codiceAdmin;

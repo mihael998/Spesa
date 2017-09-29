@@ -1,5 +1,6 @@
 package ivancardillo.spesa;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -26,6 +27,7 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import java.io.PushbackInputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -79,10 +81,11 @@ public class NuovoGruppo extends AppCompatActivity {
                 if (nomeDelGruppo.getText().toString().compareTo("") != 0 && pulsanteDataScadenza.getText().length() == 10 && pulsanteOrarioScadenza.getText().length() == 5) {
 
 
-                    String string2Qr = UUID.randomUUID().toString().substring(0, 8);
+                    final String string2Qr = UUID.randomUUID().toString().substring(0, 8);
                     SharedPreferences sharedPreferences;
                     sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
                     final String channel = (sharedPreferences.getString("token", ""));
+                    final String nomeUtente = (sharedPreferences.getString("nome", ""));
 
                     final String url = "http://www.mishu.altervista.org/api/gruppo/crea";
                     final RequestQueue req = Volley.newRequestQueue(NuovoGruppo.this);
@@ -103,9 +106,16 @@ public class NuovoGruppo extends AppCompatActivity {
                             }
 
                             if (s.compareTo("110") == 0) {
+                                ArrayList<String>z=new ArrayList<String>();
+                                z.add(nomeUtente);
+                                Gruppo gr=new Gruppo(nomeDelGruppo.getText().toString().toUpperCase(),z,pulsanteOrarioScadenza.getText().toString(), pulsanteDataScadenza.getText().toString(),channel,string2Qr);
                                 Toast.makeText(NuovoGruppo.this, "Creazione Gruppo Riuscita!", Toast.LENGTH_SHORT).show();
-                                Intent i=new Intent(NuovoGruppo.this,Bacheca.class);
-                                startActivity(i);
+                                Intent _result = new Intent();
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("value", gr);
+                                _result.putExtras(bundle);
+                                setResult(Activity.RESULT_OK, _result);
+                                finish();
                             } else
                                 Toast.makeText(NuovoGruppo.this, "Pubblicazione gruppo fallita!", Toast.LENGTH_SHORT).show();
                         }
