@@ -55,7 +55,7 @@
         <item name="windowActionModeOverlay">true</item>
 
         <!--  For Custom Action Mode Background Color/Drawable -->
-        <item name="actionModeBackground">@color/colorAccent</item>
+        <item name="actionModeBackground">@color/colorActionMode</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

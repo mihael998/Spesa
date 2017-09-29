@@ -1,5 +1,6 @@
 package ivancardillo.spesa;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -79,6 +80,8 @@ public class JoinGruppo extends AppCompatActivity {
 
                             if (s.compareTo("010") == 0) {
                                 Toast.makeText(JoinGruppo.this, "Aggiunta gruppo riuscita!", Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent();
+                                setResult(Activity.RESULT_OK, i);
                                 finish();
                             } else
                                 Toast.makeText(JoinGruppo.this, "Fai già parte di questo gruppo. Scemo!", Toast.LENGTH_SHORT).show();

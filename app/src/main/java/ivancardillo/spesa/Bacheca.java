@@ -163,6 +163,7 @@ public class Bacheca extends AppCompatActivity {
                             if (mActionMode == null) {
                                 refreshLayout.setEnabled(false);
                                 mActionMode = startActionMode(mActionModeCallback);
+                                nomeUtente.setBackgroundResource(R.color.colorActionMode);
                             }
                         }
 
@@ -208,7 +209,7 @@ public class Bacheca extends AppCompatActivity {
             public void onClick(View view) {
                 if (view == fab1) {
                     Intent i = new Intent(Bacheca.this, JoinGruppo.class);
-                    startActivity(i);
+                    startActivityForResult(i,2);
                 } else if (view == fab2) {
                     Intent i = new Intent(Bacheca.this, NuovoGruppo.class);
                     startActivityForResult(i,1);
@@ -232,6 +233,12 @@ public class Bacheca extends AppCompatActivity {
                 // The Intent's data Uri identifies which contact was selected.
 
                 // Do something with the contact here (bigger example below)
+            }
+        }
+        else
+        {
+            if (resultCode == RESULT_OK){
+                refresh();
             }
         }
     }
@@ -323,6 +330,7 @@ public class Bacheca extends AppCompatActivity {
             mActionMode = null;
             isMultiSelect = false;
             multiselect_list = new ArrayList<Gruppo>();
+            nomeUtente.setBackgroundResource(R.color.colorPrimary);
             //refreshAdapter();
         }
     };
