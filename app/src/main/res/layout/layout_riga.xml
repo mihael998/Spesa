@@ -101,6 +101,7 @@
 
                     <TextView
                         android:id="@+id/partecipanti"
+
                         style="@style/Sottotitolo"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
