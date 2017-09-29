@@ -9,12 +9,13 @@ import java.util.List;
  */
 
 public class Gruppo implements Serializable {
-    String nome;
-    String codiceGruppo;
-    String codiceAdmin;
-    ArrayList<String> utenti = null;
-    String scadenzaOra;
-    String scadenzaData;
+    private String nome;
+    private String codiceGruppo;
+    private String codiceAdmin;
+    private ArrayList<String> utenti = null;
+    private String scadenzaOra;
+    private String scadenzaData;
+
 
     public Gruppo(String nome, ArrayList<String> utenti, String scadenzaOra, String scadenzaData, String admin, String gruppo) {
         this.nome = nome;

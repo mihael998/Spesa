@@ -12,6 +12,7 @@ import java.util.UUID;
  */
 
 public class Prodotto {
+
     private String nome;
     private String note;
     private String codiceProdotto;

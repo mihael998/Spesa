@@ -44,9 +44,12 @@ import java.util.Map;
 import java.util.zip.Inflater;
 
 public class GruppoActivity extends AppCompatActivity {
-    public String nome, dataScadenza, oraScadenza, codiceGruppo, codiceAdmin, token;
+    private Gruppo gruppo;
+    private String token;
     private Toolbar toolbar;
     private ArrayList<String> partecipanti;
+    private SharedPreferences sharedPreferences;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +57,13 @@ public class GruppoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gruppo);
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
-        nome = getIntent().getExtras().getString("nomeGruppo");
-        dataScadenza = getIntent().getExtras().getString("scadenzaData");
-        oraScadenza = getIntent().getExtras().getString("scadenzaData");
-        codiceGruppo = getIntent().getExtras().getString("codiceGruppo");
-        codiceAdmin = getIntent().getExtras().getString("codiceAdmin");
-        partecipanti = getIntent().getStringArrayListExtra("partecipanti");
-        SharedPreferences sharedPreferences;
+        bundle = getIntent().getExtras();
+        gruppo=(Gruppo)bundle.getSerializable("value");
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         token = (sharedPreferences.getString("token", ""));
-        setTitle(nome);
+        setTitle(gruppo.getNome());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //Toast.makeText(GruppoActivity.this, nome, Toast.LENGTH_SHORT).show();
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +73,7 @@ public class GruppoActivity extends AppCompatActivity {
         });
 
 
-        if (token.equals(codiceAdmin)) {
+        if (token.equals(gruppo.getCodiceAdmin())) {
             ImageView immagine;
             immagine = (ImageView) findViewById(R.id.starAdmin);
             immagine.setVisibility(View.VISIBLE);
@@ -85,58 +82,7 @@ public class GruppoActivity extends AppCompatActivity {
     }
 
 
-    private void refresh(String codiceGruppo) {
-
-
-        final String url = "http://www.mishu.altervista.org/api/gruppo/" + codiceGruppo + "/" + token;
-        final RequestQueue req = Volley.newRequestQueue(GruppoActivity.this);
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-
-                try {
-                    JSONArray array = response.getJSONArray("gruppi");
-                    for (int b = 0; b < array.length(); b++) {
-
-                        String nome, data, orario, codiceGruppo, codiceAdmin;
-                        ArrayList<String> partecipanti = new ArrayList<String>();
-                        nome = array.getJSONObject(b).getString("nomeGruppo");
-                        data = array.getJSONObject(b).getString("dataScadenza");
-                        codiceGruppo = array.getJSONObject(b).getString("codiceGruppo");
-                        codiceAdmin = array.getJSONObject(b).getString("adminGruppo");
-                        SimpleDateFormat sm = new SimpleDateFormat("yyyy-MM-dd");
-                        Date d = sm.parse(data);
-                        sm.applyPattern("dd/MM/yyyy");
-                        String newDateString = sm.format(d);
-                        orario = array.getJSONObject(b).getString("oraScadenza");
-                        JSONArray array1 = array.getJSONObject(b).getJSONArray("partecipanti");
-                        for (int c = 0; c < array1.length(); c++) {
-                            partecipanti.add(array1.getString(c));
-                        }
-                    }
-
-
-                } catch (JSONException e) {
-                    Toast.makeText(GruppoActivity.this, "Errore interno", Toast.LENGTH_SHORT).show();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        }, new Response.ErrorListener() {
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(GruppoActivity.this, "Errore di comunicazione", Toast.LENGTH_SHORT).show();
-            }
-        }) {
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                return headers;
-            }
-        };
-        req.add(jsonObjReq);
-
+    private void refresh() {
     }
 
     @Override
@@ -151,15 +97,6 @@ public class GruppoActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.infoGruppo:
-                /*SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.commit();
-                Intent i = new Intent(GruppoActivity.this, MainActivity.class);
-                startActivity(i);*/
-                /*Intent avanti = new Intent(GruppoActivity.this, InfoActivity.class);
-                avanti.putExtra("codiceGruppo", codiceGruppo);
-                startActivity(avanti);*/
                 DialogFragment newFragment = new InfoActivity();
                 newFragment.show(getFragmentManager(), "info");
                 return true;
