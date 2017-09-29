@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -63,6 +64,7 @@ public class NuovoGruppo extends AppCompatActivity {
     Button pulsanteOrarioScadenza;
     Button pulsanteDataScadenza;
     private int mYear, mMonth, mDay, mHour, mMinute;
+    ImageButton buttonElimina;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +74,16 @@ public class NuovoGruppo extends AppCompatActivity {
         pulsanteDataScadenza = (Button) findViewById(R.id.pulsanteDataScadenza);
         pulsanteOrarioScadenza = (Button) findViewById(R.id.pulsanteOrarioScadenza);
         ImageButton button = (ImageButton) findViewById(R.id.creaGruppo);
+        buttonElimina = (ImageButton) findViewById(R.id.annullaCreazione);
         final EditText nomeDelGruppo = (EditText) findViewById(R.id.nomeGr);
         final Map<String, String> jsonParams = new HashMap<String, String>();
+
+        buttonElimina.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +151,41 @@ public class NuovoGruppo extends AppCompatActivity {
 
 
     }
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                NuovoGruppo.this);
+
+        // set title
+        alertDialogBuilder.setTitle("Attenzione");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Continuando interromperai la creazione del gruppo. Vuoi continuare")
+                .setCancelable(false)
+                .setPositiveButton("Si",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, close
+                        // current activity
+                        NuovoGruppo.this.finish();
+                    }
+                })
+                .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+            return;
+        }
 
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();

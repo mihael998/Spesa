@@ -108,7 +108,7 @@ public class Bacheca extends AppCompatActivity {
         fam = (FloatingActionMenu) findViewById(R.id.fab);
         fab1.setOnClickListener(onButtonClick());
         fab2.setOnClickListener(onButtonClick());
-        fam.setClosedOnTouchOutside(true);
+        fam.setClosedOnTouchOutside(true );
 
         nomeUtente.setText("Ciao " + sharedPreferences.getString("nome", "null") + "!");
 
