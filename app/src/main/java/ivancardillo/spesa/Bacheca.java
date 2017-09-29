@@ -66,6 +66,7 @@ public class Bacheca extends AppCompatActivity {
     private FloatingActionButton fab, fab1, fab2;
     private FloatingActionMenu fam;
     SharedPreferences sharedPreferences;
+    private String tokenUtente;
     TextView nomeUtente;
     boolean isMultiSelect = false;
     //private Animation fab_open,fab_close,rotate_forward,rotate_backward;
@@ -111,6 +112,7 @@ public class Bacheca extends AppCompatActivity {
         fam.setClosedOnTouchOutside(true );
 
         nomeUtente.setText("Ciao " + sharedPreferences.getString("nome", "null") + "!");
+        tokenUtente=sharedPreferences.getString("token", "null");
 
         fam.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
             @Override
@@ -286,7 +288,7 @@ public class Bacheca extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    final String url = "http://www.mishu.altervista.org/api/gruppo/elimina";
+                    final String url = "http://www.mishu.altervista.org/api/gruppo/elimina/"+tokenUtente;
                     final RequestQueue req = Volley.newRequestQueue(Bacheca.this);
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url,nuovo, new Response.Listener<JSONObject>() {
                         @Override
