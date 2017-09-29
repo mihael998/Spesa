@@ -329,6 +329,7 @@ public class Bacheca extends AppCompatActivity {
 
         @Override
         public void onDestroyActionMode(android.view.ActionMode mode) {
+            refreshLayout.setEnabled(true);
             mActionMode = null;
             isMultiSelect = false;
             multiselect_list = new ArrayList<Gruppo>();
