@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -23,15 +24,15 @@ import java.util.Objects;
  * Created by ivanc on 18/09/2017.
  */
 
-public class GruppiAdapter extends RecyclerView.Adapter<GruppiAdapter.ViewHolder> {
+public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHolder> {
 
-    private List<Gruppo> mContacts;
+    private List<Prodotto> mContacts;
     // Store the context for easy access
     private Context mContext;
 
     // Pass in the contact array into the constructor
-    public GruppiAdapter(Context context, List<Gruppo> gruppi) {
-        mContacts = gruppi;
+    public ProdottiAdapter(Context context, List<Prodotto> prodotti) {
+        mContacts = prodotti;
         mContext = context;
     }
 
@@ -41,12 +42,12 @@ public class GruppiAdapter extends RecyclerView.Adapter<GruppiAdapter.ViewHolder
     }
 
     @Override
-    public GruppiAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProdottiAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View contactView = inflater.inflate(R.layout.layout_riga, parent, false);
+        View contactView = inflater.inflate(R.layout.layout_riga_prodotti, parent, false);
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(contactView);
@@ -55,23 +56,13 @@ public class GruppiAdapter extends RecyclerView.Adapter<GruppiAdapter.ViewHolder
 
     // Involves populating data into the item through holder
     @Override
-    public void onBindViewHolder(GruppiAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(ProdottiAdapter.ViewHolder viewHolder, int position) {
         // Get the data model based on position
-        Gruppo contact = mContacts.get(position);
+        Prodotto contact = mContacts.get(position);
 
         // Set item views based on your views and data model
-        TextView textView = viewHolder.nomeGruppo;
+        TextView textView = viewHolder.nomeProdotto;
         textView.setText(contact.getNome());
-        TextView textView1 = viewHolder.dataScadenza;
-        textView1.setText(contact.getScadenzaData());
-        TextView textView9 = viewHolder.oraScadenza;
-        textView9.setText(contact.getScadenzaOra());
-        TextView textView2 = viewHolder.elencoPartecipanti;
-        textView2.setText(contact.getPartecipanti());
-        TextView codiceGruppo = viewHolder.codiceGruppo;
-        codiceGruppo.setText(contact.getCodiceGruppo());
-        TextView codiceAdmin = viewHolder.codiceAdmin;
-        codiceAdmin.setText(contact.getCodiceAdmin());
     }
 
     // Returns the total count of items in the list
@@ -81,12 +72,8 @@ public class GruppiAdapter extends RecyclerView.Adapter<GruppiAdapter.ViewHolder
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nomeGruppo;
-        public TextView elencoPartecipanti;
-        public TextView dataScadenza;
-        public TextView oraScadenza;
-        public TextView codiceGruppo;
-        public TextView codiceAdmin;
+        public TextView nomeProdotto;
+        public ImageView image;
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         CardView cv;
@@ -97,13 +84,9 @@ public class GruppiAdapter extends RecyclerView.Adapter<GruppiAdapter.ViewHolder
             // Stores the itemView in a public final member variable that can be used
             // to access the context from any ViewHolder instance.
             super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.cardView);
-            nomeGruppo = (TextView) itemView.findViewById(R.id.nomeGruppo);
-            elencoPartecipanti = (TextView) itemView.findViewById(R.id.partecipanti);
-            dataScadenza = (TextView) itemView.findViewById(R.id.scadenzaData);
-            oraScadenza = (TextView) itemView.findViewById(R.id.scadenzaOra);
-            codiceGruppo = (TextView) itemView.findViewById(R.id.codiceGruppo);
-            codiceAdmin = (TextView) itemView.findViewById(R.id.codiceAdmin);
+            cv = (CardView) itemView.findViewById(R.id.cardView2);
+            nomeProdotto = (TextView) itemView.findViewById(R.id.nomeProdotto);
+            image = (ImageView) itemView.findViewById(R.id.check);
         }
     }
 

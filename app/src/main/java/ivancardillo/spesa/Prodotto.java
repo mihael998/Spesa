@@ -19,32 +19,39 @@ public class Prodotto {
     private String dataRichiesta;
     private String codiceRichiedente;
     private String codiceGruppo;
-    private Image imgProdotto;
+    private String imgProdotto;
 
-    public Prodotto (String nome, String codiceRichiedente, String codiceGruppo ){
+    public Prodotto(){
+        this.nome = "";
+        this.codiceRichiedente = "";
+        this.codiceGruppo = "";
+        this.dataRichiesta = "";
+        this.codiceProdotto = UUID.randomUUID().toString().substring(0, 8);
+        this.note = "";
+        this.imgProdotto = "";
+    }
+
+    public Prodotto(String nome, String codiceRichiedente, String codiceGruppo, String note, String imgProdotto) {
         this.nome = nome;
         this.codiceRichiedente = codiceRichiedente;
         this.codiceGruppo = codiceGruppo;
         this.dataRichiesta = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
-        this.codiceProdotto = UUID.randomUUID().toString().substring(0,8);
-    }
-
-    public Prodotto (String nome, String codiceRichiedente, String codiceGruppo, String note ){
-        new Prodotto(nome, codiceRichiedente, codiceGruppo);
+        this.codiceProdotto = UUID.randomUUID().toString().substring(0, 8);
         this.note = note;
-    }
-
-    public Prodotto (String nome, String codiceRichiedente, String codiceGruppo, Image imgProdotto){
-        new Prodotto(nome, codiceRichiedente, codiceGruppo);
         this.imgProdotto = imgProdotto;
     }
 
-    public Prodotto (String nome, String codiceRichiedente, String codiceGruppo, String note, Image imgProdotto){
-        new Prodotto(nome, codiceRichiedente, codiceGruppo, note);
+    public Prodotto(String nome, String codiceRichiedente, String codiceGruppo, String note, String imgProdotto, String codiceProdotto) {
+        this.nome = nome;
+        this.codiceRichiedente = codiceRichiedente;
+        this.codiceGruppo = codiceGruppo;
+        this.dataRichiesta = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+        this.codiceProdotto = codiceProdotto;
+        this.note = note;
         this.imgProdotto = imgProdotto;
     }
 
-    public Image getImgProdotto() {
+    public String getImgProdotto() {
         return imgProdotto;
     }
 
@@ -88,7 +95,11 @@ public class Prodotto {
         this.dataRichiesta = dataRichiesta;
     }
 
-    public void setImgProdotto(Image imgProdotto) {
+    public void setDataRichiesta(){
+        this.dataRichiesta = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+    }
+
+    public void setImgProdotto(String imgProdotto) {
         this.imgProdotto = imgProdotto;
     }
 

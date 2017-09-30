@@ -33,7 +33,7 @@ public class InfoActivity extends DialogFragment {
         codice = (TextView) content.findViewById(R.id.testoCodiceGruppo);
         image = (ImageView) content.findViewById(R.id.imageCodice);
         String codiceGruppo;
-        codiceGruppo = ((GruppoActivity) getActivity()).codiceGruppo;
+        codiceGruppo = ((GruppoActivity) getActivity()).gruppo.getCodiceGruppo();
         codice.setText(codiceGruppo);
         builder.setTitle("Copia codice oppure scanerizza codice QR!");
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();

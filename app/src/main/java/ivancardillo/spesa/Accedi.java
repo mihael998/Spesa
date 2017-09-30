@@ -57,14 +57,20 @@ public class Accedi extends AppCompatActivity {
                             String token = "";
                             try {
                                 s = response.get("risposta").toString();
-                                token = response.get("token").toString();
 
                             } catch (JSONException e) {
-                                Toast.makeText(Accedi.this, "Errore interno", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Accedi.this, "Errore Interno", Toast.LENGTH_SHORT).show();
+
                             }
                             if (s.compareTo("000") == 0) {
-                                Toast.makeText(Accedi.this, "Accesso effettuatooooo.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Accedi.this, "Accesso effettuato", Toast.LENGTH_SHORT).show();
                                 Intent avanti = new Intent(Accedi.this, Bacheca.class);
+                                try {
+                                    token = response.get("token").toString();
+
+                                } catch (JSONException e) {
+                                    Toast.makeText(Accedi.this, "Errore Interno", Toast.LENGTH_SHORT).show();
+                                }
 
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
 

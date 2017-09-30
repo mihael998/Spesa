@@ -1,12 +1,16 @@
 package ivancardillo.spesa;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -69,7 +73,6 @@ public class Bacheca extends AppCompatActivity {
     private String tokenUtente;
     TextView nomeUtente;
     boolean isMultiSelect = false;
-    //private Animation fab_open,fab_close,rotate_forward,rotate_backward;
 
 
     boolean doubleBackToExitPressedOnce = false;
@@ -98,7 +101,6 @@ public class Bacheca extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bacheca);
-
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         nomeUtente = (TextView) findViewById(R.id.nomeUtenteBacheca);
 
@@ -110,6 +112,12 @@ public class Bacheca extends AppCompatActivity {
         fab1.setOnClickListener(onButtonClick());
         fab2.setOnClickListener(onButtonClick());
         fam.setClosedOnTouchOutside(true );
+
+        if (ContextCompat.checkSelfPermission(Bacheca.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(Bacheca.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 3);
+        }
+
 
         nomeUtente.setText("Ciao " + sharedPreferences.getString("nome", "null") + "!");
         tokenUtente=sharedPreferences.getString("token", "null");
