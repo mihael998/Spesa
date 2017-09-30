@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,23 +59,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.Inflater;
 
+import static ivancardillo.spesa.R.id.psw;
+
 public class GruppoActivity extends AppCompatActivity {
     private ArrayList<Prodotto> prodotti;
+    ImageView star;
     Gruppo gruppo;
     ProdottiAdapter adapter;
     private String token;
     private Toolbar toolbar;
+    private EditText nomeProduct;
+    private EditText note;
     ImageView camera;
     Prodotto nuovoProdotto;
     private ArrayList<String> partecipanti;
     private SharedPreferences sharedPreferences;
     private Bundle bundle;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gruppo);
+        star = (ImageView) findViewById(R.id.starAdmin);
         FloatingActionButton sendFab = (FloatingActionButton) findViewById(R.id.send);
+        final Map<String, String> jsonParams = new HashMap<String, String>();
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         bundle = getIntent().getExtras();
@@ -86,15 +95,18 @@ public class GruppoActivity extends AppCompatActivity {
         RecyclerView rvProdotti = (RecyclerView) findViewById(R.id.listaProdotti);
         prodotti = new ArrayList<Prodotto>();
         adapter = new ProdottiAdapter(this, prodotti);
+        nomeProduct = (EditText) findViewById(R.id.nomeProduct);
+        note = (EditText) findViewById(R.id.note);
+        fab = (FloatingActionButton) findViewById(R.id.send);
         rvProdotti.setLayoutManager(new LinearLayoutManager(this));
         rvProdotti.setItemAnimator(new DefaultItemAnimator());
         rvProdotti.setAdapter(adapter);
 
         prodotti.add(new Prodotto("Pasta", "", "", "", ""));
-        prodotti.add(new Prodotto("Latte", "","","",""));
+        prodotti.add(new Prodotto("Latte", "", "", "", ""));
         adapter.notifyDataSetChanged();
 
-        rvProdotti.addOnItemTouchListener(new RecyclerItemListener(getApplicationContext(), rvProdotti,
+        /*rvProdotti.addOnItemTouchListener(new RecyclerItemListener(getApplicationContext(), rvProdotti,
                 new RecyclerItemListener.RecyclerTouchListener() {
                     public void onClickItem(View v, int position) {
 
@@ -103,7 +115,7 @@ public class GruppoActivity extends AppCompatActivity {
                     public void onLongClickItem(View v, int position) {
 
                     }
-                }));
+                }));*/
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -136,13 +148,88 @@ public class GruppoActivity extends AppCompatActivity {
             }
         });
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (nomeProduct.getText().toString() == "")
+                    Toast.makeText(GruppoActivity.this, "Nome prodotto è un campo obbligatorio", Toast.LENGTH_SHORT).show();
+                else {
+                    nuovoProdotto.setNome(nomeProduct.getText().toString());
+                    nuovoProdotto.setCodiceGruppo(gruppo.getCodiceGruppo());
+                    nuovoProdotto.setCodiceRichiedente(sharedPreferences.getString("token", ""));
+                    nuovoProdotto.setDataRichiesta();
+                    nuovoProdotto.setNote(note.getText().toString());
+
+                    String url = "www.altervista.org/mishu";
+
+                    jsonParams.put("nomeProdotto", nuovoProdotto.getNome());
+                    jsonParams.put("codiceProdotto", nuovoProdotto.getCodiceProdotto());
+                    jsonParams.put("codiceGruppo", nuovoProdotto.getCodiceGruppo());
+                    jsonParams.put("codiceRichiedente", nuovoProdotto.getCodiceRichiedente());
+                    jsonParams.put("dataRichiesta", nuovoProdotto.getDataRichiesta());
+                    jsonParams.put("note", nuovoProdotto.getNote());
+
+                    /*JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(jsonParams), new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            String s = "";
+                            String token = "";
+                            try {
+                                s = response.get("risposta").toString();
+
+                            } catch (JSONException e) {
+                                Toast.makeText(Accedi.this, "Errore Interno", Toast.LENGTH_SHORT).show();
+
+                            }
+                            if (s.compareTo("000") == 0) {
+                                Toast.makeText(Accedi.this, "Accesso effettuato", Toast.LENGTH_SHORT).show();
+                                Intent avanti = new Intent(Accedi.this, Bacheca.class);
+                                try {
+                                    token = response.get("token").toString();
+
+                                } catch (JSONException e) {
+                                    Toast.makeText(Accedi.this, "Errore Interno", Toast.LENGTH_SHORT).show();
+                                }
+
+                                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+
+                                if (sharedPreferences.getString("token", "0") != "0") {
+                                    startActivity(avanti);
+                                } else {
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("token", token);
+                                    editor.putString("nome", nome.getText().toString());
+                                    editor.commit();
+                                    startActivity(avanti);
+                                }
+                            } else
+                                Toast.makeText(Accedi.this, "Nome utente e/o password scorretti!", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Response.ErrorListener() {
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(Accedi.this, "Errore di connessione", Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<String, String>();
+                            headers.put("Content-Type", "application/json; charset=utf-8");
+                            return headers;
+                        }
+                    };
+
+                    req.add(jsonObjReq);
+                    */
+
+
+
+                }
+            }
+        });
+
 
         if (token.equals(gruppo.getCodiceAdmin())) {
-            ImageView immagine;
-            immagine = (ImageView) findViewById(R.id.starAdmin);
-            immagine.setVisibility(View.VISIBLE);
+            star.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
