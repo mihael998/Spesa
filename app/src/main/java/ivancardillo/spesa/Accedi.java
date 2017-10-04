@@ -39,9 +39,7 @@ public class Accedi extends AppCompatActivity {
         Button accedi = (Button) findViewById(R.id.accediManda);
         final EditText nome = (EditText) findViewById(R.id.nomeUtente);
         final EditText psw = (EditText) findViewById(R.id.psw);
-
-
-
+        
         accedi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
