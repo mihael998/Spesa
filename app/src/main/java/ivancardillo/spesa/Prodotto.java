@@ -86,6 +86,10 @@ public class Prodotto {
     public void setCodiceProdotto(String codiceProdotto) {
         this.codiceProdotto = codiceProdotto;
     }
+    public void setCodiceProdotto() {
+        this.codiceProdotto = UUID.randomUUID().toString().substring(0, 8);
+    }
+
 
     public void setCodiceRichiedente(String codiceRichiedente) {
         this.codiceRichiedente = codiceRichiedente;

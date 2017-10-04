@@ -9,12 +9,14 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +53,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -59,6 +64,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.Inflater;
 
+import static ivancardillo.spesa.R.id.image;
 import static ivancardillo.spesa.R.id.psw;
 
 public class GruppoActivity extends AppCompatActivity {
@@ -70,12 +76,14 @@ public class GruppoActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private EditText nomeProduct;
     private EditText note;
-    ImageView camera;
+    ImageView camera, cameraDelete;
+    ProgressBar loading;
     Prodotto nuovoProdotto;
     private ArrayList<String> partecipanti;
     private SharedPreferences sharedPreferences;
     private Bundle bundle;
     FloatingActionButton fab;
+    private File dir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +99,7 @@ public class GruppoActivity extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         token = (sharedPreferences.getString("token", ""));
         camera = (ImageView) findViewById(R.id.camera);
+        cameraDelete = (ImageView) findViewById(R.id.cameraDelete);
         setTitle(gruppo.getNome());
         RecyclerView rvProdotti = (RecyclerView) findViewById(R.id.listaProdotti);
         prodotti = new ArrayList<Prodotto>();
@@ -102,10 +111,6 @@ public class GruppoActivity extends AppCompatActivity {
         rvProdotti.setItemAnimator(new DefaultItemAnimator());
         rvProdotti.setAdapter(adapter);
 
-        prodotti.add(new Prodotto("Pasta", "", "", "", ""));
-        prodotti.add(new Prodotto("Latte", "", "", "", ""));
-        adapter.notifyDataSetChanged();
-
         /*rvProdotti.addOnItemTouchListener(new RecyclerItemListener(getApplicationContext(), rvProdotti,
                 new RecyclerItemListener.RecyclerTouchListener() {
                     public void onClickItem(View v, int position) {
@@ -116,7 +121,17 @@ public class GruppoActivity extends AppCompatActivity {
 
                     }
                 }));*/
-
+        cameraDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                camera.setImageResource(R.drawable.ic_add_a_photo);
+                File canc=new File(nuovoProdotto.getImgProdotto());
+                canc.delete();
+                nuovoProdotto.setImgProdotto("");
+                cameraDelete.setVisibility(View.GONE);
+                camera.setClickable(true);
+            }
+        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         nuovoProdotto = new Prodotto();
@@ -132,16 +147,28 @@ public class GruppoActivity extends AppCompatActivity {
                 finish();
             }
         });
-        final File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 String picName = nuovoProdotto.getCodiceProdotto() + ".jpg";
-                File newfile = new File(dir, "Spesa/"+picName);
+                File newfile = new File(dir, picName);
                 nuovoProdotto.setImgProdotto(newfile.getAbsolutePath());
-                Uri picUri = Uri.fromFile(newfile);
+                Toast.makeText(GruppoActivity.this,newfile.getAbsolutePath() , Toast.LENGTH_LONG).show();
+                Uri picUri;
+                if (Build.VERSION.SDK_INT >= 23) {
+                    picUri = FileProvider.getUriForFile(GruppoActivity.this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            newfile);
+                }
+                else
+                {
+                    picUri = Uri.fromFile(newfile);
+                }
+
+
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
                 startActivityForResult(takePictureIntent, 100);
 
@@ -151,17 +178,32 @@ public class GruppoActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (nomeProduct.getText().toString() == "")
+                if (nomeProduct.getText().toString().equals(""))
                     Toast.makeText(GruppoActivity.this, "Nome prodotto è un campo obbligatorio", Toast.LENGTH_SHORT).show();
                 else {
                     nuovoProdotto.setNome(nomeProduct.getText().toString());
                     nuovoProdotto.setCodiceGruppo(gruppo.getCodiceGruppo());
                     nuovoProdotto.setCodiceRichiedente(sharedPreferences.getString("token", ""));
                     nuovoProdotto.setDataRichiesta();
-                    nuovoProdotto.setNote(note.getText().toString());
+                    if(note.getText().toString().compareTo("")!=0)
+                    {
+                        nuovoProdotto.setNote(note.getText().toString());
+                    }
+                    Bitmap imageBitmap;
+                    if(nuovoProdotto.getImgProdotto()!="")
+                    {
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = false;
+                        imageBitmap = BitmapFactory.decodeFile(nuovoProdotto.getImgProdotto(), options);
+                        jsonParams.put("image", getStringImage(imageBitmap));
+                    }
+                    else
+                    {
+                        jsonParams.put("image", "");
+                    }
 
-                    String url = "www.altervista.org/mishu";
 
+                    String url = "http://www.mishu.altervista.org/api/richiesta";
                     jsonParams.put("nomeProdotto", nuovoProdotto.getNome());
                     jsonParams.put("codiceProdotto", nuovoProdotto.getCodiceProdotto());
                     jsonParams.put("codiceGruppo", nuovoProdotto.getCodiceGruppo());
@@ -169,45 +211,51 @@ public class GruppoActivity extends AppCompatActivity {
                     jsonParams.put("dataRichiesta", nuovoProdotto.getDataRichiesta());
                     jsonParams.put("note", nuovoProdotto.getNote());
 
-                    /*JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(jsonParams), new Response.Listener<JSONObject>() {
+                    final RequestQueue req = Volley.newRequestQueue(GruppoActivity.this);
+                    loading=(ProgressBar)findViewById(R.id.loadingPanel);
+                    camera.setVisibility(View.GONE);
+                    cameraDelete.setVisibility(View.GONE);
+                    loading.setVisibility(View.VISIBLE);
+                    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(jsonParams), new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
+
+                            loading.setVisibility(View.GONE);
+                            camera.setImageResource(R.drawable.ic_add_a_photo);
+                            camera.setVisibility(View.VISIBLE);
+                            camera.setClickable(true);
+
+
                             String s = "";
-                            String token = "";
                             try {
                                 s = response.get("risposta").toString();
+                                if(s.equals("100"))
+                                {
+                                    prodotti.add(nuovoProdotto);
+                                    adapter.notifyItemInserted(prodotti.size()-1);
+                                    File canc=new File(nuovoProdotto.getImgProdotto());
+                                    canc.delete();
+                                    nuovoProdotto=new Prodotto();
+                                    nomeProduct.setText("");
+                                    note.setText("");
+                                    Toast.makeText(GruppoActivity.this, "Caricato", Toast.LENGTH_SHORT).show();
 
+                                }
+                                else{
+                                    Toast.makeText(GruppoActivity.this, s, Toast.LENGTH_LONG).show();
+                                }
                             } catch (JSONException e) {
-                                Toast.makeText(Accedi.this, "Errore Interno", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(GruppoActivity.this, "Errore Interno", Toast.LENGTH_SHORT).show();
 
                             }
-                            if (s.compareTo("000") == 0) {
-                                Toast.makeText(Accedi.this, "Accesso effettuato", Toast.LENGTH_SHORT).show();
-                                Intent avanti = new Intent(Accedi.this, Bacheca.class);
-                                try {
-                                    token = response.get("token").toString();
 
-                                } catch (JSONException e) {
-                                    Toast.makeText(Accedi.this, "Errore Interno", Toast.LENGTH_SHORT).show();
-                                }
-
-                                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-
-                                if (sharedPreferences.getString("token", "0") != "0") {
-                                    startActivity(avanti);
-                                } else {
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("token", token);
-                                    editor.putString("nome", nome.getText().toString());
-                                    editor.commit();
-                                    startActivity(avanti);
-                                }
-                            } else
-                                Toast.makeText(Accedi.this, "Nome utente e/o password scorretti!", Toast.LENGTH_SHORT).show();
                         }
                     }, new Response.ErrorListener() {
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(Accedi.this, "Errore di connessione", Toast.LENGTH_SHORT).show();
+
+                            loading.setVisibility(View.GONE);
+                            camera.setVisibility(View.VISIBLE);
+                            Toast.makeText(GruppoActivity.this, "Errore di connessione", Toast.LENGTH_SHORT).show();
                         }
                     }) {
                         public Map<String, String> getHeaders() throws AuthFailureError {
@@ -218,7 +266,7 @@ public class GruppoActivity extends AppCompatActivity {
                     };
 
                     req.add(jsonObjReq);
-                    */
+
 
 
 
@@ -232,6 +280,14 @@ public class GruppoActivity extends AppCompatActivity {
         }
     }
 
+    public String getStringImage(Bitmap bmp){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 100 && resultCode == RESULT_OK) {
@@ -239,6 +295,12 @@ public class GruppoActivity extends AppCompatActivity {
             options.inJustDecodeBounds = false;
             Bitmap imageBitmap = BitmapFactory.decodeFile(nuovoProdotto.getImgProdotto(), options);
             camera.setImageBitmap(imageBitmap);
+            camera.setClickable(false);
+            cameraDelete.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            nuovoProdotto.setImgProdotto("");
         }
 
     }
