@@ -38,8 +38,6 @@ public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHo
     public ProdottiAdapter(Context context, List<Prodotto> prodotti) {
         mContacts = prodotti;
         mContext = context;
-        clicked = new SparseBooleanArray();
-        visibility = false;
     }
 
     // Easy access to the context object in the recyclerview
@@ -69,6 +67,17 @@ public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHo
         // Set item views based on your views and data model
         TextView textView = viewHolder.nomeProdotto;
         textView.setText(contact.getNome());
+        TextView noteProdotto = viewHolder.noteProdotto;
+
+        if(!contact.getNote().equals(""))
+        {
+            noteProdotto.setText(contact.getNote());
+            noteProdotto.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            noteProdotto.setVisibility(View.GONE);
+        }
         imageView = viewHolder.image;
     }
 
@@ -80,7 +89,9 @@ public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nomeProdotto;
+        public TextView noteProdotto;
         public ImageView image;
+
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         CardView cv;
@@ -93,21 +104,8 @@ public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHo
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cardView2);
             nomeProdotto = (TextView) itemView.findViewById(R.id.nomeProdotto);
-            image = (ImageView) itemView.findViewById(R.id.check);
+            noteProdotto= (TextView) itemView.findViewById(R.id.noteProdotto);
 
-            cv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (clicked.get(getAdapterPosition(), false) && image.getVisibility() == View.VISIBLE) {
-                        clicked.delete(getAdapterPosition());
-                        image.setImageResource(R.drawable.ic_add_round_grey);
-                    } else
-                        if (clicked.get(getAdapterPosition(), true) && image.getVisibility() == View.VISIBLE){
-                        clicked.put(getAdapterPosition(), true);
-                        image.setImageResource(R.drawable.ic_add_round_primary);
-                    }
-                }
-            });
         }
 
 

@@ -14,31 +14,33 @@
         card_view:cardUseCompatPadding="true"
         android:focusable="true"
         android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        >
+        android:foreground="?android:attr/selectableItemBackground">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp"
-            android:id="@+id/prodottoClickable"
-            android:gravity="center_vertical">
+            android:padding="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="5"
-                style="@style/Testo"
+                android:paddingLeft="@dimen/album_title_padding"
+                android:paddingRight="@dimen/album_title_padding"
+                android:paddingTop="@dimen/album_title_padding"
+                android:textColor="@color/colorPrimaryTesto"
+                android:textSize="@dimen/album_title"
                 android:id="@+id/nomeProdotto"/>
-
-            <ImageView
+            <TextView
+                android:id="@+id/noteProdotto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/ic_add_round_grey"
-                android:id="@+id/check"
-                android:visibility="gone"
+                android:paddingBottom="@dimen/songs_count_padding_bottom"
+                android:paddingLeft="@dimen/album_title_padding"
+                android:paddingRight="@dimen/album_title_padding"
+                android:textSize="@dimen/songs_count"
+                android:layout_below="@id/nomeProdotto"
                 />
-        </LinearLayout>
+
+        </RelativeLayout>
 
     </android.support.v7.widget.CardView>

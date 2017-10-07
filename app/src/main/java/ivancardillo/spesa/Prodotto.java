@@ -4,7 +4,9 @@ import android.icu.util.Calendar;
 import android.media.Image;
 
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.Comparator;
 
 
 /**
@@ -20,6 +22,7 @@ public class Prodotto {
     private String codiceRichiedente;
     private String codiceGruppo;
     private String imgProdotto;
+    private boolean stato;
 
     public Prodotto(){
         this.nome = "";
@@ -29,6 +32,7 @@ public class Prodotto {
         this.codiceProdotto = UUID.randomUUID().toString().substring(0, 8);
         this.note = "";
         this.imgProdotto = "";
+        stato=false;
     }
 
     public Prodotto(String nome, String codiceRichiedente, String codiceGruppo, String note, String imgProdotto) {
@@ -39,16 +43,27 @@ public class Prodotto {
         this.codiceProdotto = UUID.randomUUID().toString().substring(0, 8);
         this.note = note;
         this.imgProdotto = imgProdotto;
+        this.stato=false;
     }
 
-    public Prodotto(String nome, String codiceRichiedente, String codiceGruppo, String note, String imgProdotto, String codiceProdotto) {
+    public Prodotto(String nome, String codiceRichiedente, String codiceGruppo, String note, String imgProdotto, String codiceProdotto,String dataRichiesta,String stato) {
         this.nome = nome;
         this.codiceRichiedente = codiceRichiedente;
         this.codiceGruppo = codiceGruppo;
-        this.dataRichiesta = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+        this.dataRichiesta = dataRichiesta;
         this.codiceProdotto = codiceProdotto;
         this.note = note;
         this.imgProdotto = imgProdotto;
+        if(stato.equals("0"))
+        this.stato=false;
+        else
+            this.stato=true;
+    }
+    public boolean getStato() {
+        return stato;
+    }
+    public void setStato(boolean stato) {
+        this.stato = stato;
     }
 
     public String getImgProdotto() {
@@ -113,5 +128,23 @@ public class Prodotto {
 
     public void setNote(String note) {
         this.note = note;
+    }
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) return true;
+        if (!(o instanceof Prodotto)) {
+            return false;
+        }
+        Prodotto user = (Prodotto) o;
+        return stato == user.stato &&
+                Objects.equals(codiceProdotto, user.codiceProdotto) &&
+                Objects.equals(codiceGruppo, user.codiceGruppo)&&
+                Objects.equals(codiceRichiedente,user.codiceRichiedente);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stato,codiceProdotto,codiceGruppo,codiceRichiedente);
     }
 }

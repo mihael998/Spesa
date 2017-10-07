@@ -37,49 +37,59 @@
             style="@style/Testo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
 
-        <TextView
-            style="@style/Sottotitolo"
+            android:layout_height="wrap_content">
+            <TextView
+                style="@style/Sottotitolo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:layout_marginTop="18dp"
+                android:layout_centerVertical="true"
+                android:gravity="left"
+                android:text="FOTO GRUPPO" />
+
+
+            <ImageView
+                android:id="@+id/pulsanteScattafoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_add_a_photo"
+                android:tint="@color/colorPrimary"/>
+            <ImageView
+                android:id="@+id/pulsanteCancellafoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_delete"
+                android:visibility="gone"
+                android:tint="@color/colorPrimary"/>
+            <ImageView
+                android:id="@+id/pulsanteScegliFoto"
+                android:layout_width="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/pulsanteScattafoto"
+                android:src="@drawable/ic_photo_select"/>
+        </RelativeLayout>
+
+
+        <ImageView
+            android:layout_marginTop="20dp"
+            android:id="@+id/thumbnailNuovoGruppo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="9dp"
-            android:layout_marginTop="18dp"
-            android:gravity="left"
-            android:text="DATA SCADENZA" />
+            android:scaleType="center"
+            android:src="@drawable/ic_no_profile"
+        android:layout_height="200dp" />
 
-        <Button
-            android:id="@+id/pulsanteDataScadenza"
-            style="@style/TestoBottoneVuoto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="showDatePickerDialog"
 
-            android:text="Scegli data scadenza" />
 
-        <TextView
-            style="@style/Sottotitolo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="9dp"
-            android:layout_marginTop="18dp"
-            android:gravity="left"
-            android:text="ORARIO SCADENZA" />
 
-        <Button
-            android:id="@+id/pulsanteOrarioScadenza"
-            style="@style/TestoBottoneVuoto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="showTimePickerDialog"
-            android:text="Scegli orario scadenza" />
-
-        <!--<DatePicker
-            android:id="@+id/datePicker"
-            android:layout_width="match_parent"
-            android:layout_height="190dp"
-            android:datePickerMode="spinner"
-            android:headerBackground="@color/colorPrimary"
-            android:paddingTop="30dp" />-->
 
     </LinearLayout>
 

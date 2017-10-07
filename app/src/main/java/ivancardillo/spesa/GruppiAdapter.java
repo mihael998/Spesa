@@ -1,6 +1,9 @@
 package ivancardillo.spesa;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -62,16 +66,24 @@ public class GruppiAdapter extends RecyclerView.Adapter<GruppiAdapter.ViewHolder
         // Set item views based on your views and data model
         TextView textView = viewHolder.nomeGruppo;
         textView.setText(contact.getNome());
-        TextView textView1 = viewHolder.dataScadenza;
-        textView1.setText(contact.getScadenzaData());
-        TextView textView9 = viewHolder.oraScadenza;
-        textView9.setText(contact.getScadenzaOra());
         TextView textView2 = viewHolder.elencoPartecipanti;
         textView2.setText(contact.getPartecipanti());
-        TextView codiceGruppo = viewHolder.codiceGruppo;
-        codiceGruppo.setText(contact.getCodiceGruppo());
-        TextView codiceAdmin = viewHolder.codiceAdmin;
-        codiceAdmin.setText(contact.getCodiceAdmin());
+        ImageView imageView=viewHolder.thumbnailFoto;
+        if(!contact.getImagePath().equals(""))
+        {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = false;
+            Bitmap imageBitmap;
+            imageBitmap = BitmapFactory.decodeFile(contact.getImagePath(), options);
+            imageView.setImageBitmap(imageBitmap);
+        }
+        else
+        {
+            imageView.setImageResource(R.drawable.ic_no_profile);
+        }
+
+
+
     }
 
     // Returns the total count of items in the list
@@ -83,10 +95,7 @@ public class GruppiAdapter extends RecyclerView.Adapter<GruppiAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nomeGruppo;
         public TextView elencoPartecipanti;
-        public TextView dataScadenza;
-        public TextView oraScadenza;
-        public TextView codiceGruppo;
-        public TextView codiceAdmin;
+        public ImageView thumbnailFoto;
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         CardView cv;
@@ -100,10 +109,8 @@ public class GruppiAdapter extends RecyclerView.Adapter<GruppiAdapter.ViewHolder
             cv = (CardView) itemView.findViewById(R.id.cardView);
             nomeGruppo = (TextView) itemView.findViewById(R.id.nomeGruppo);
             elencoPartecipanti = (TextView) itemView.findViewById(R.id.partecipanti);
-            dataScadenza = (TextView) itemView.findViewById(R.id.scadenzaData);
-            oraScadenza = (TextView) itemView.findViewById(R.id.scadenzaOra);
-            codiceGruppo = (TextView) itemView.findViewById(R.id.codiceGruppo);
-            codiceAdmin = (TextView) itemView.findViewById(R.id.codiceAdmin);
+            thumbnailFoto=(ImageView) itemView.findViewById(R.id.thumbnail);
+
         }
     }
 

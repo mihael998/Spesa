@@ -10,13 +10,22 @@ import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.media.Image;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.format.DateFormat;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +36,14 @@ import android.widget.Toast;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PushbackInputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -61,22 +77,34 @@ import java.util.UUID;
 
 public class NuovoGruppo extends AppCompatActivity {
     Calendar myCalendar;
-    Button pulsanteOrarioScadenza;
-    Button pulsanteDataScadenza;
+    ImageView scattaFoto,scegliFoto,thumbnailGruppo,eliminaFoto;
     private int mYear, mMonth, mDay, mHour, mMinute;
     ImageButton buttonElimina;
+    private File dir,fileFinale;
+    private String string2Qr,absolutePathImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nuovo_gruppo);
 
-        pulsanteDataScadenza = (Button) findViewById(R.id.pulsanteDataScadenza);
-        pulsanteOrarioScadenza = (Button) findViewById(R.id.pulsanteOrarioScadenza);
         ImageButton button = (ImageButton) findViewById(R.id.creaGruppo);
         buttonElimina = (ImageButton) findViewById(R.id.annullaCreazione);
+        scattaFoto=(ImageView)findViewById(R.id.pulsanteScattafoto);
+        thumbnailGruppo=(ImageView)findViewById(R.id.thumbnailNuovoGruppo);
+        absolutePathImage="";
+        eliminaFoto=(ImageView)findViewById(R.id.pulsanteCancellafoto);
+        scegliFoto=(ImageView)findViewById(R.id.pulsanteScegliFoto);
         final EditText nomeDelGruppo = (EditText) findViewById(R.id.nomeGr);
         final Map<String, String> jsonParams = new HashMap<String, String>();
+
+
+        string2Qr = UUID.randomUUID().toString().substring(0, 8);
+        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+        fileFinale=new File(dir+File.separator+"appSpesa"+File.separator+"gruppi"+File.separator+string2Qr+".jpg");
+
+
 
         buttonElimina.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,14 +112,57 @@ public class NuovoGruppo extends AppCompatActivity {
                 finish();
             }
         });
+        scattaFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                absolutePathImage=fileFinale.getAbsolutePath();
+                Uri picUri;
+                if (Build.VERSION.SDK_INT >= 23) {
+                    picUri = FileProvider.getUriForFile(NuovoGruppo.this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            fileFinale);
+                }
+                else
+                {
+                    picUri = Uri.fromFile(fileFinale);
+                }
+
+
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
+                startActivityForResult(takePictureIntent, 100);
+            }
+        });
+        scegliFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 3);
+            }
+        });
+        eliminaFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File canc=new File(absolutePathImage);
+                canc.delete();
+                absolutePathImage="";
+                thumbnailGruppo.setImageResource(R.drawable.ic_photo_select);
+                eliminaFoto.setVisibility(View.GONE);
+                scattaFoto.setVisibility(View.VISIBLE);
+                scegliFoto.setVisibility(View.VISIBLE);
+
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (nomeDelGruppo.getText().toString().compareTo("") != 0 && pulsanteDataScadenza.getText().length() == 10 && pulsanteOrarioScadenza.getText().length() == 5) {
+                if (nomeDelGruppo.getText().toString().compareTo("") != 0) {
 
 
-                    final String string2Qr = UUID.randomUUID().toString().substring(0, 8);
+
                     SharedPreferences sharedPreferences;
                     sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
                     final String channel = (sharedPreferences.getString("token", ""));
@@ -101,9 +172,20 @@ public class NuovoGruppo extends AppCompatActivity {
                     final RequestQueue req = Volley.newRequestQueue(NuovoGruppo.this);
                     jsonParams.put("token", channel);
                     jsonParams.put("nomeGruppo", nomeDelGruppo.getText().toString());
-                    jsonParams.put("scadenzaDataGruppo", pulsanteDataScadenza.getText().toString());
-                    jsonParams.put("scadenzaOrarioGruppo", pulsanteOrarioScadenza.getText().toString());
+                    jsonParams.put("scadenzaDataGruppo", new SimpleDateFormat("dd/MM/yyyy").format(android.icu.util.Calendar.getInstance().getTime()));
                     jsonParams.put("codiceGruppo", string2Qr);
+                    final Bitmap imageBitmap;
+                    if(!absolutePathImage.equals(""))
+                    {
+                        BitmapFactory.Options options= new BitmapFactory.Options();
+                        options.inJustDecodeBounds=false;
+                        imageBitmap = BitmapFactory.decodeFile(absolutePathImage, options);
+                        jsonParams.put("image", encodeToBase64(imageBitmap, Bitmap.CompressFormat.JPEG,80));
+                    }
+                    else
+                    {
+                        jsonParams.put("image", "");
+                    }
 
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(jsonParams), new Response.Listener<JSONObject>() {
                         @Override
@@ -118,12 +200,8 @@ public class NuovoGruppo extends AppCompatActivity {
                             if (s.compareTo("110") == 0) {
                                 ArrayList<String>z=new ArrayList<String>();
                                 z.add(nomeUtente);
-                                Gruppo gr=new Gruppo(nomeDelGruppo.getText().toString().toUpperCase(),z,pulsanteOrarioScadenza.getText().toString(), pulsanteDataScadenza.getText().toString(),channel,string2Qr);
                                 Toast.makeText(NuovoGruppo.this, "Creazione Gruppo Riuscita!", Toast.LENGTH_SHORT).show();
                                 Intent _result = new Intent();
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("value", gr);
-                                _result.putExtras(bundle);
                                 setResult(Activity.RESULT_OK, _result);
                                 finish();
                             } else
@@ -131,7 +209,7 @@ public class NuovoGruppo extends AppCompatActivity {
                         }
                     }, new Response.ErrorListener() {
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(NuovoGruppo.this, error.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(NuovoGruppo.this, error.toString(), Toast.LENGTH_LONG).show();
                         }
                     }) {
                         public Map<String, String> getHeaders() throws AuthFailureError {
@@ -151,8 +229,16 @@ public class NuovoGruppo extends AppCompatActivity {
 
 
     }
+    public String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality)
+    {
+        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+        image.compress(compressFormat, quality, byteArrayOS);
+        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+    }
+
     @Override
     public void onBackPressed() {
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 NuovoGruppo.this);
 
@@ -167,6 +253,11 @@ public class NuovoGruppo extends AppCompatActivity {
                     public void onClick(DialogInterface dialog,int id) {
                         // if this button is clicked, close
                         // current activity
+                        if(!absolutePathImage.equals(""))
+                        {
+                            File canc=new File(absolutePathImage);
+                            canc.delete();
+                        }
                         NuovoGruppo.this.finish();
                     }
                 })
@@ -187,7 +278,87 @@ public class NuovoGruppo extends AppCompatActivity {
             return;
         }
 
-    public void showDatePickerDialog(View v) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = false;
+            Bitmap imageBitmap;
+            imageBitmap = getResizedBitmap(BitmapFactory.decodeFile(absolutePathImage, options),1080);
+            OutputStream stream = null;
+            try {
+                stream = new FileOutputStream(absolutePathImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+            thumbnailGruppo.setImageBitmap(imageBitmap);
+            thumbnailGruppo.setImageTintList(null);
+            eliminaFoto.setVisibility(View.VISIBLE);
+            scattaFoto.setVisibility(View.GONE);
+            scegliFoto.setVisibility(View.GONE);
+
+        }
+        else if(requestCode == 100 && resultCode == RESULT_CANCELED)
+        {
+
+        }
+        else if(requestCode == 3&&resultCode == RESULT_OK)
+        {
+            Uri selectedImageUri = data.getData();
+            InputStream is = null;
+            try {
+                is = getContentResolver().openInputStream(selectedImageUri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Bitmap imageBitmap;
+            imageBitmap = getResizedBitmap(bitmap,1080);
+            OutputStream stream = null;
+            try {
+                stream = new FileOutputStream(fileFinale.getAbsolutePath());
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+            absolutePathImage=fileFinale.getAbsolutePath();
+
+            thumbnailGruppo.setImageBitmap(imageBitmap);
+
+            thumbnailGruppo.setImageTintList(null);
+            eliminaFoto.setVisibility(View.VISIBLE);
+            scattaFoto.setVisibility(View.GONE);
+            scegliFoto.setVisibility(View.GONE);
+        }
+        else
+        {
+
+        }
+
+    }
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    /*public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
@@ -195,33 +366,10 @@ public class NuovoGruppo extends AppCompatActivity {
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.show(getSupportFragmentManager(), "timePicker");
-    }
+    }*/
 
-    private String saveToInternalStorage(Bitmap bitmapImage) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        // Create imageDir
-        File mypath = new File(directory, "profile.jpg");
 
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return directory.getAbsolutePath();
-    }
-
-    public static class TimePickerFragment extends DialogFragment
+    /*public static class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
         @Override
@@ -282,7 +430,7 @@ public class NuovoGruppo extends AppCompatActivity {
             pulsante.setBackgroundResource(R.drawable.rounded_shape);
             pulsante.setText(dayA + "/" + (monthA) + "/" + year);
         }
-    }
+    }*/
 
 
 }
