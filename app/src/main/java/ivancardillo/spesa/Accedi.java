@@ -97,7 +97,7 @@ public class Accedi extends AppCompatActivity {
                     };
 
                     req.add(jsonObjReq);
-                    ;
+
 
                 }
             }

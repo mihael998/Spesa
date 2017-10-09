@@ -108,8 +108,12 @@ public class Bacheca extends AppCompatActivity {
         fam.setClosedOnTouchOutside(true );
 
         if (ContextCompat.checkSelfPermission(Bacheca.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_DENIED && ContextCompat.checkSelfPermission(Bacheca.this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(Bacheca.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 3);
+            requestPermissions(new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA}, 3);
+
         }
 
 

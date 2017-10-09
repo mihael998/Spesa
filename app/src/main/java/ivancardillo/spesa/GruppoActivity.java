@@ -156,10 +156,6 @@ public class GruppoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         nuovoProdotto = new Prodotto();
 
-        if (ContextCompat.checkSelfPermission(GruppoActivity.this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(GruppoActivity.this, new String[]{Manifest.permission.CAMERA}, 2);
-        }
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
