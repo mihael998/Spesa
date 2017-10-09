@@ -69,12 +69,12 @@ import java.util.Map;
 import static java.security.AccessController.getContext;
 
 public class Bacheca extends AppCompatActivity {
+
     public ArrayList<Gruppo> gruppi;
     ArrayList<Gruppo> multiselect_list = new ArrayList<>();
     android.view.ActionMode mActionMode;
     Menu context_menu;
     GruppiAdapter adapter;
-    private ListView v;
     private Gruppo g;
     private SwipeRefreshLayout refreshLayout;
     private Toolbar toolbar;

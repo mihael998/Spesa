@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
     <android.support.v7.widget.CardView
-
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:card_view="http://schemas.android.com/tools"
@@ -9,27 +8,82 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="0dp"
+        android:clickable="false"
         card_view:cardBackgroundColor="@color/color_white"
         app:cardElevation="1dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         card_view:cardUseCompatPadding="true"
-        android:focusable="true"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground">
+        >
+        <LinearLayout
+            android:orientation="vertical"
+            android:clickable="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
 
         <RelativeLayout
+            android:focusable="true"
+            android:clickable="false"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp">
+            android:padding="10dp"
+            >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/album_title_padding"
                 android:paddingRight="@dimen/album_title_padding"
+                android:layout_centerVertical="true"
                 android:paddingTop="@dimen/album_title_padding"
                 android:textColor="@color/colorPrimaryTesto"
                 android:textSize="@dimen/album_title"
                 android:id="@+id/nomeProdotto"/>
+            <TextView
+                android:id="@+id/richiedenteProdotto"
+                android:textStyle="italic"
+                android:layout_width="wrap_content"
+                android:layout_alignBaseline="@id/nomeProdotto"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/songs_count_padding_bottom"
+                android:paddingLeft="@dimen/album_title_padding"
+                android:paddingRight="@dimen/album_title_padding"
+                android:textSize="@dimen/songs_count"
+                android:layout_toRightOf="@id/nomeProdotto"
+                />
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_expand_more"
+                android:layout_alignParentRight="true"
+                android:id="@+id/expandIcon"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:clickable="false"
+            android:id="@+id/caratteristicheProdotto"
+            android:layout_width="match_parent"
+            android:padding="10dp"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/grigio"/>
+            <ImageView
+                android:id="@+id/immagineProdotto"
+                android:layout_width="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="false"
+                android:scaleType="centerInside"
+                android:layout_height="@dimen/album_cover_height"/>
             <TextView
                 android:id="@+id/noteProdotto"
                 android:layout_width="wrap_content"
@@ -38,9 +92,28 @@
                 android:paddingLeft="@dimen/album_title_padding"
                 android:paddingRight="@dimen/album_title_padding"
                 android:textSize="@dimen/songs_count"
-                android:layout_below="@id/nomeProdotto"
+                android:layout_below="@id/immagineProdotto"
                 />
 
-        </RelativeLayout>
+            <Button
+                android:id="@+id/modificaProdottoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
 
+                android:layout_below="@id/noteProdotto"
+                style="?android:attr/borderlessButtonStyle"
+                android:text="Modifica"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:id="@+id/eliminaProdottoButton"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/noteProdotto"
+                android:layout_toLeftOf="@id/modificaProdottoButton"
+                style="?android:attr/borderlessButtonStyle"
+                android:text="Elimina"/>
+
+
+        </RelativeLayout>
+        </LinearLayout>
     </android.support.v7.widget.CardView>

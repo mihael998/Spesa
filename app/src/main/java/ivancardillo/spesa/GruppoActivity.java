@@ -199,7 +199,7 @@ public class GruppoActivity extends AppCompatActivity {
                 else {
                     nuovoProdotto.setNome(nomeProduct.getText().toString());
                     nuovoProdotto.setCodiceGruppo(gruppo.getCodiceGruppo());
-                    nuovoProdotto.setCodiceRichiedente(sharedPreferences.getString("token", ""));
+                    nuovoProdotto.setCodiceRichiedente(sharedPreferences.getString("nome", ""));
                     nuovoProdotto.setDataRichiesta();
                     if(note.getText().toString().compareTo("")!=0)
                     {
@@ -224,7 +224,7 @@ public class GruppoActivity extends AppCompatActivity {
                     jsonParams.put("nomeProdotto", nuovoProdotto.getNome());
                     jsonParams.put("codiceProdotto", nuovoProdotto.getCodiceProdotto());
                     jsonParams.put("codiceGruppo", nuovoProdotto.getCodiceGruppo());
-                    jsonParams.put("codiceRichiedente", nuovoProdotto.getCodiceRichiedente());
+                    jsonParams.put("codiceRichiedente", sharedPreferences.getString("token", ""));
                     jsonParams.put("dataRichiesta", nuovoProdotto.getDataRichiesta());
                     jsonParams.put("note", nuovoProdotto.getNote());
 
@@ -343,13 +343,45 @@ public class GruppoActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 JSONArray prodottiRisposta=null;
                 Prodotto nuovo;
+                Bitmap image;
                 try {
                     prodottiRisposta=response.getJSONArray("prodotti");
                     for(int a=0;a<prodottiRisposta.length();a++)
                     {
-                        nuovo=new Prodotto(prodottiRisposta.getJSONObject(a).getString("richiesta"),prodottiRisposta.getJSONObject(a).getString("codice_richiedente"),gruppo.getCodiceGruppo(),
-                                prodottiRisposta.getJSONObject(a).getString("note"),"",prodottiRisposta.getJSONObject(a).getString("codice_prodotto"),prodottiRisposta.getJSONObject(a).getString("data_creazione"),
-                                prodottiRisposta.getJSONObject(a).getString("stato"));
+                        File creazione;
+                        if(!prodottiRisposta.getJSONObject(a).getString("image").equals(""))
+                        {
+                            image= decodeBase64(prodottiRisposta.getJSONObject(a).getString("image"));
+                            Bitmap bitmapNew;
+                            OutputStream stream = null;
+
+                            creazione=new File(dir+File.separator+"appSpesa"+File.separator+"prodotti"+File.separator+prodottiRisposta.getJSONObject(a).getString("codice_prodotto")+".jpg");
+                            if(!creazione.exists())
+                            {
+                                try {
+                                    stream = new FileOutputStream(creazione.getAbsolutePath());
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                                image.compress(Bitmap.CompressFormat.JPEG,100, stream);
+
+                            }
+                            else
+                            {
+
+                            }
+                            nuovo=new Prodotto(prodottiRisposta.getJSONObject(a).getString("richiesta"),prodottiRisposta.getJSONObject(a).getString("codice_richiedente"),gruppo.getCodiceGruppo(),
+                                    prodottiRisposta.getJSONObject(a).getString("note"),creazione.getAbsolutePath(),prodottiRisposta.getJSONObject(a).getString("codice_prodotto"),prodottiRisposta.getJSONObject(a).getString("data_creazione"),
+                                    prodottiRisposta.getJSONObject(a).getString("stato"));
+                        }
+                        else
+                        {
+                            nuovo=new Prodotto(prodottiRisposta.getJSONObject(a).getString("richiesta"),prodottiRisposta.getJSONObject(a).getString("codice_richiedente"),gruppo.getCodiceGruppo(),
+                                    prodottiRisposta.getJSONObject(a).getString("note"),"",prodottiRisposta.getJSONObject(a).getString("codice_prodotto"),prodottiRisposta.getJSONObject(a).getString("data_creazione"),
+                                    prodottiRisposta.getJSONObject(a).getString("stato"));
+                        }
+
+
 
                         if(prodotti.contains(nuovo))
                         {
@@ -390,7 +422,11 @@ public class GruppoActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu_gruppo, menu);
         return true;
     }
-
+    public static Bitmap decodeBase64(String input)
+    {
+        byte[] decodedBytes = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection

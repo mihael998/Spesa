@@ -1,6 +1,8 @@
 package ivancardillo.spesa;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -32,6 +36,7 @@ public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHo
     private List<Prodotto> mContacts;
     private Context mContext;
     private Boolean visibility;
+    Boolean aperto =false;
     ImageView imageView;
 
     // Pass in the contact array into the constructor
@@ -68,17 +73,41 @@ public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHo
         TextView textView = viewHolder.nomeProdotto;
         textView.setText(contact.getNome());
         TextView noteProdotto = viewHolder.noteProdotto;
-
-        if(!contact.getNote().equals(""))
+        noteProdotto.setText(contact.getNote());
+        TextView richiedenteProdotto=viewHolder.richiedenteProdotto;
+        richiedenteProdotto.setText("by "+contact.getCodiceRichiedente());
+        ImageView image=viewHolder.image;
+        if(!contact.getImgProdotto().equals(""))
         {
-            noteProdotto.setText(contact.getNote());
-            noteProdotto.setVisibility(View.VISIBLE);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = false;
+            Bitmap imageBitmap;
+            imageBitmap = BitmapFactory.decodeFile(contact.getImgProdotto(), options);
+            image.setImageBitmap(imageBitmap);
         }
         else
         {
-            noteProdotto.setVisibility(View.GONE);
+            image.setImageResource(R.drawable.ic_no_profile);
         }
-        imageView = viewHolder.image;
+
+        final ImageButton imgButton = (ImageButton) viewHolder.imageButton;
+        final RelativeLayout relativeLayout = (RelativeLayout) viewHolder.relativeLayout;
+        imgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!aperto){
+                    relativeLayout.setVisibility(View.VISIBLE);
+                    imgButton. setImageResource(R.drawable.ic_expand_less);
+                    aperto = true;
+                }
+                else{
+                    relativeLayout.setVisibility(View.GONE);
+                    imgButton. setImageResource(R.drawable.ic_expand_more);
+                    aperto = false;
+                }
+            }
+        });
+
     }
 
     // Returns the total count of items in the list
@@ -89,8 +118,10 @@ public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nomeProdotto;
-        public TextView noteProdotto;
+        public TextView noteProdotto, richiedenteProdotto;
         public ImageView image;
+        public RelativeLayout relativeLayout;
+        public ImageButton imageButton;
 
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
@@ -105,6 +136,10 @@ public class ProdottiAdapter extends RecyclerView.Adapter<ProdottiAdapter.ViewHo
             cv = (CardView) itemView.findViewById(R.id.cardView2);
             nomeProdotto = (TextView) itemView.findViewById(R.id.nomeProdotto);
             noteProdotto= (TextView) itemView.findViewById(R.id.noteProdotto);
+            richiedenteProdotto= (TextView) itemView.findViewById(R.id.richiedenteProdotto);
+            image=(ImageView)itemView.findViewById(R.id.immagineProdotto);
+            relativeLayout=(RelativeLayout)itemView.findViewById(R.id.caratteristicheProdotto);
+            imageButton = (ImageButton) itemView.findViewById(R.id.expandIcon);
 
         }
 

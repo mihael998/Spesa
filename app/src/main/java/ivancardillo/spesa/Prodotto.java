@@ -19,14 +19,14 @@ public class Prodotto {
     private String note;
     private String codiceProdotto;
     private String dataRichiesta;
-    private String codiceRichiedente;
+    private String nomeRichiedente;
     private String codiceGruppo;
     private String imgProdotto;
     private boolean stato;
 
     public Prodotto(){
         this.nome = "";
-        this.codiceRichiedente = "";
+        this.nomeRichiedente = "";
         this.codiceGruppo = "";
         this.dataRichiesta = "";
         this.codiceProdotto = UUID.randomUUID().toString().substring(0, 8);
@@ -37,7 +37,7 @@ public class Prodotto {
 
     public Prodotto(String nome, String codiceRichiedente, String codiceGruppo, String note, String imgProdotto) {
         this.nome = nome;
-        this.codiceRichiedente = codiceRichiedente;
+        this.nomeRichiedente = codiceRichiedente;
         this.codiceGruppo = codiceGruppo;
         this.dataRichiesta = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
         this.codiceProdotto = UUID.randomUUID().toString().substring(0, 8);
@@ -48,7 +48,7 @@ public class Prodotto {
 
     public Prodotto(String nome, String codiceRichiedente, String codiceGruppo, String note, String imgProdotto, String codiceProdotto,String dataRichiesta,String stato) {
         this.nome = nome;
-        this.codiceRichiedente = codiceRichiedente;
+        this.nomeRichiedente = codiceRichiedente;
         this.codiceGruppo = codiceGruppo;
         this.dataRichiesta = dataRichiesta;
         this.codiceProdotto = codiceProdotto;
@@ -79,7 +79,7 @@ public class Prodotto {
     }
 
     public String getCodiceRichiedente() {
-        return codiceRichiedente;
+        return nomeRichiedente;
     }
 
     public String getDataRichiesta() {
@@ -107,7 +107,7 @@ public class Prodotto {
 
 
     public void setCodiceRichiedente(String codiceRichiedente) {
-        this.codiceRichiedente = codiceRichiedente;
+        this.nomeRichiedente = codiceRichiedente;
     }
 
     public void setDataRichiesta(String dataRichiesta) {
@@ -140,11 +140,11 @@ public class Prodotto {
         return stato == user.stato &&
                 Objects.equals(codiceProdotto, user.codiceProdotto) &&
                 Objects.equals(codiceGruppo, user.codiceGruppo)&&
-                Objects.equals(codiceRichiedente,user.codiceRichiedente);
+                Objects.equals(nomeRichiedente,user.nomeRichiedente);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stato,codiceProdotto,codiceGruppo,codiceRichiedente);
+        return Objects.hash(stato,codiceProdotto,codiceGruppo,nomeRichiedente);
     }
 }
